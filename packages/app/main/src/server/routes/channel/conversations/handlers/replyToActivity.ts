@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-import { ResourceResponse } from '@bfemulator/sdk-shared';
+//import { ResourceResponse } from '@bfemulator/sdk-shared';
 import { Activity } from 'botframework-schema';
 import * as HttpStatus from 'http-status-codes';
 import { Next, Request, Response } from 'restify';
@@ -40,6 +40,7 @@ import { OAuthLinkEncoder } from '../../../../utils/oauthLinkEncoder';
 import { sendErrorResponse } from '../../../../utils/sendErrorResponse';
 import { ConversationAPIPathParameters } from '../types/conversationAPIPathParameters';
 import { EmulatorRestServer } from '../../../../restServer';
+import { WebSocketServer } from '../../../../webSocketServer';
 
 export function createReplyToActivityHandler(emulatorServer: EmulatorRestServer) {
   return (req: Request, res: Response, next: Next): any => {
@@ -52,9 +53,12 @@ export function createReplyToActivityHandler(emulatorServer: EmulatorRestServer)
       activity.replyToId = req.params.activityId;
 
       const continuation = function(): void {
-        const response: ResourceResponse = (req as any).conversation.postActivityToUser(activity);
+        //const response: ResourceResponse = (req as any).conversation.postActivityToUser(activity);
+        const payload = { activities: [activity] };
+        WebSocketServer.send(payload);
 
-        res.send(HttpStatus.OK, response);
+        //res.send(HttpStatus.OK, response);
+        res.send(HttpStatus.OK);
         res.end();
       };
 
